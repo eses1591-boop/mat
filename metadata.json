@@ -1,0 +1,8 @@
+{
+  "name": "Mutlak Değer Macerası - 7. Sınıf Matematik Oyunu",
+  "description": "7. sınıf tam sayılarda mutlak değer konusunu eğlenceli seviyeler, sayı doğrusu görselleştirmesi ve ödüllerle öğreten interaktif matematik oyunu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mutlak Değer Macerası - 7. Sınıf Matematik Oyunu</title>
+  <meta name="description" content="7. sınıf tam sayılarda mutlak değer konusunu eğlenceli seviyeler ve sayı doğrusuyla öğreten interaktif matematik oyunu.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+    .pulse-glow {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-white">
+
+  <!-- Universal Header -->
+  <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div onclick="showScreen('menu')" class="flex items-center gap-2.5 cursor-pointer">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-400 p-0.5 shadow-lg">
+          <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center font-black text-amber-400 font-mono text-base">
+            |a|
+          </div>
+        </div>
+        <div>
+          <div class="font-extrabold text-sm sm:text-base tracking-tight bg-gradient-to-r from-white via-amber-200 to-emerald-300 bg-clip-text text-transparent">
+            Mutlak Değer Macerası
+          </div>
+          <div class="text-[11px] text-slate-400 flex items-center gap-1">
+            <span>7. Sınıf Matematik</span>
+            <span class="w-1 h-1 rounded-full bg-emerald-400"></span>
+            <span class="text-emerald-400 font-medium">Uzaklık Asla Negatif Olmaz!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- In-game stats -->
+        <div id="header-stats" class="hidden items-center gap-2">
+          <div class="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5">
+            🏆 <span id="header-score">0</span>
+          </div>
+          <div id="header-streak" class="hidden px-2.5 py-1.5 bg-orange-500/20 border border-orange-500/40 rounded-xl text-xs font-black text-orange-400">
+            🔥 <span id="header-streak-val">0</span>x
+          </div>
+          <div class="px-2.5 py-1.5 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-1" id="header-lives">
+            <span>❤️</span><span>❤️</span><span>❤️</span>
+          </div>
+        </div>
+
+        <button onclick="toggleGuide(true)" class="px-3 py-1.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+          📖 <span class="hidden sm:inline">Konu Özeti</span>
+        </button>
+
+        <button id="sound-btn" onclick="toggleSound()" class="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 transition" title="Ses">
+          🔊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+    <!-- SCREEN 1: MENU -->
+    <div id="screen-menu" class="space-y-8 text-center">
+      <div class="space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-300 text-xs sm:text-sm font-semibold">
+          ✨ 7. Sınıf Tam Sayılar & Mutlak Değer Macerası
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight">
+          Mutlak Değerin <br>
+          <span class="bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            Sırrını Çözmeye Hazır mısın?
+          </span>
+        </h1>
+        <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto">
+          Sayı doğrusunda adımları say, sıfıra olan mesafeyi keşfet! Dışarıdaki eksi tuzaklarına düşmeden seviyeleri tamamla.
+        </p>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-around gap-4 text-center">
+        <div>
+          <span class="text-xs text-slate-400">Temel Kural</span>
+          <div class="text-lg font-black text-emerald-400 font-mono">|-7| = +7</div>
+        </div>
+        <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+        <div>
+          <span class="text-xs text-slate-400">Sıfırın Değeri</span>
+          <div class="text-lg font-black text-cyan-400 font-mono">|0| = 0</div>
+        </div>
+        <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+        <div>
+          <span class="text-xs text-slate-400">Tuzak Nokta</span>
+          <div class="text-lg font-black text-rose-400 font-mono">-|-5| = -5</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button onclick="showScreen('levelSelect')" class="p-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-2xl shadow-xl shadow-amber-500/20 active:scale-95 transition flex flex-col items-center justify-center gap-2">
+          <div class="p-3 bg-white/20 rounded-xl text-2xl">▶</div>
+          <div>
+            <div class="text-base font-extrabold text-slate-950">Bölüm Modu</div>
+            <div class="text-xs text-slate-900/80 font-medium">3 Kademeli Aşama</div>
+          </div>
+        </button>
+
+        <button onclick="startEndless()" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 rounded-2xl active:scale-95 transition flex flex-col items-center justify-center gap-2 text-white">
+          <div class="p-3 bg-indigo-500/20 text-indigo-400 rounded-xl text-2xl">⚡</div>
+          <div>
+            <div class="text-base font-bold">Hız Maratonu</div>
+            <div class="text-xs text-slate-400 font-medium">Sonsuz Pratik & Rekor</div>
+          </div>
+        </button>
+
+        <button onclick="showScreen('lab')" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 rounded-2xl active:scale-95 transition flex flex-col items-center justify-center gap-2 text-white">
+          <div class="p-3 bg-emerald-500/20 text-emerald-400 rounded-xl text-2xl">🧭</div>
+          <div>
+            <div class="text-base font-bold">Laboratuvar</div>
+            <div class="text-xs text-slate-400 font-medium">İnteraktif Sayı Doğrusu</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-center gap-4 text-xs text-slate-400">
+        <span class="text-amber-300 font-semibold">🏆 En Yüksek Skor: <span id="high-score-val">0</span></span>
+        <span>•</span>
+        <button onclick="toggleGuide(true)" class="underline hover:text-white transition">Konu Özeti ve Kuralları</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: LEVEL SELECT -->
+    <div id="screen-levelSelect" class="hidden space-y-6">
+      <div class="text-center space-y-1">
+        <h2 class="text-2xl sm:text-3xl font-black text-white">Görev Aşamaları</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Seviyeleri tamamla, rozetleri topla ve Mutlak Değer Büyücüsü ol!</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="levels-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="text-center pt-2">
+        <button onclick="showScreen('menu')" class="text-xs text-slate-400 hover:text-white underline transition">
+          ← Ana Menüye Dön
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: PLAYING -->
+    <div id="screen-playing" class="hidden space-y-5">
+      <!-- Status bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-3 sm:p-4 rounded-2xl">
+        <div>
+          <span id="playing-level-badge" class="text-xs font-bold text-amber-400 uppercase tracking-wider">1. AŞAMA</span>
+          <div id="playing-q-count" class="text-sm font-extrabold text-white">Soru 1 / 5</div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="text-right">
+            <span class="text-[11px] text-slate-400">Kalan Süre</span>
+            <div id="playing-timer-text" class="text-sm font-black font-mono text-emerald-400">25 sn</div>
+          </div>
+          <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div id="playing-timer-bar" class="h-full bg-emerald-400 transition-all duration-1000" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span id="question-text" class="text-xs sm:text-sm font-medium text-slate-400">İfadenin sonucunu bulunuz:</span>
+          <button id="hint-btn" onclick="revealHint()" class="hidden text-xs text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30">
+            💡 İpucu
+          </button>
+        </div>
+
+        <div id="hint-box" class="hidden mb-4 p-3 bg-amber-950/40 border border-amber-500/40 rounded-xl text-xs text-amber-200">
+          <strong>İpucu:</strong> <span id="hint-text"></span>
+        </div>
+
+        <div class="py-6 sm:py-8 text-center bg-slate-950/60 rounded-2xl border border-slate-800 my-2">
+          <div id="question-prompt" class="text-3xl sm:text-5xl font-black font-mono text-amber-300 tracking-wider">
+            |-7| = ?
+          </div>
+        </div>
+
+        <!-- Dynamic Number Line in question if applicable -->
+        <div id="question-numberline-container" class="my-4"></div>
+
+        <!-- Options Grid -->
+        <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6"></div>
+
+        <!-- Feedback & Next drawer -->
+        <div id="feedback-drawer" class="hidden mt-6 pt-5 border-t border-slate-800 space-y-4">
+          <div id="feedback-banner" class="p-4 rounded-2xl border flex items-start gap-3">
+            <span id="feedback-icon" class="text-2xl">🎉</span>
+            <div>
+              <div id="feedback-title" class="font-extrabold text-sm sm:text-base">Harika! Doğru Cevap!</div>
+              <p id="feedback-explanation" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans mt-1"></p>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="nextQuestion()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+              <span id="next-btn-text">Sıradaki Soruya Geç</span> →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: LEVEL COMPLETE -->
+    <div id="screen-levelComplete" class="hidden max-w-lg mx-auto text-center space-y-6 bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-emerald-400 p-1 shadow-xl">
+        <div class="w-full h-full bg-slate-950 rounded-[20px] flex items-center justify-center text-3xl">
+          🏆
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <span class="text-xs font-bold px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/40">
+          Aşama Başarıyla Tamamlandı!
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">Tebrikler Matematik Kaşifi!</h2>
+        <p id="complete-subtitle" class="text-xs sm:text-sm text-slate-300">Soruları başarıyla çözdün.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+        <div>
+          <span class="text-xs text-slate-400">Toplam Puan</span>
+          <div id="complete-score" class="text-2xl font-black text-amber-400 font-mono">0</div>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400">En Uzun Seri</span>
+          <div id="complete-streak" class="text-2xl font-black text-orange-400 font-mono">0x 🔥</div>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <button id="next-stage-btn" onclick="goNextStage()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl shadow-lg active:scale-95 transition">
+          Sonraki Aşamaya Geç →
+        </button>
+        <button onclick="retryCurrentLevel()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-sm transition">
+          Bu Aşamayı Tekrar Oyna
+        </button>
+        <button onclick="showScreen('levelSelect')" class="text-xs text-slate-400 hover:text-white underline transition block mx-auto pt-1">
+          Aşama Seçim Ekranı
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: GAME OVER -->
+    <div id="screen-gameOver" class="hidden max-w-lg mx-auto text-center space-y-6 bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 text-3xl">
+        💔
+      </div>
+      <div class="space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-white">Canların Bitti!</h2>
+        <p class="text-xs sm:text-sm text-slate-300">
+          Matematikte hata yapmak öğrenmenin bir parçasıdır. Unutma: Mutlak değer sıfıra olan uzaklıktır ve asla negatif olmaz!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 text-center">
+        <div>
+          <span class="text-xs text-slate-400">Puan</span>
+          <div id="over-score" class="text-xl font-bold text-amber-400 font-mono">0</div>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400">Doğru Sayısı</span>
+          <div id="over-correct" class="text-xl font-bold text-emerald-400 font-mono">0</div>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <button onclick="retryCurrentLevel()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-black rounded-xl shadow-lg active:scale-95 transition">
+          Yeniden Dene (3 Can İle)
+        </button>
+        <button onclick="toggleGuide(true)" class="w-full py-2.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 rounded-xl text-sm font-semibold transition">
+          📖 Kuralları ve İpuçlarını Oku
+        </button>
+        <button onclick="showScreen('menu')" class="text-xs text-slate-400 hover:text-white underline transition block mx-auto pt-1">
+          Ana Menüye Dön
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: LAB EXPLORER -->
+    <div id="screen-lab" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+        <button onclick="showScreen('menu')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition flex items-center gap-2">
+          ← Ana Menü
+        </button>
+        <div class="text-center">
+          <h2 class="font-extrabold text-base sm:text-lg text-white">Sayı Doğrusu Laboratuvarı</h2>
+          <p class="text-xs text-slate-400">Özgürce dene, mesafeyi keşfet!</p>
+        </div>
+        <div class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl font-bold text-sm">
+          Lab Skoru: <span id="lab-score-val">0</span>
+        </div>
+      </div>
+
+      <!-- Main Interactive Line -->
+      <div id="lab-numberline" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl"></div>
+
+      <!-- Live Inspector Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl text-center">
+          <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Seçilen Sayı</span>
+          <div id="lab-val-display" class="text-3xl font-black text-amber-400 mt-1 font-mono">-5</div>
+          <span id="lab-val-type" class="text-xs text-slate-400 mt-1 block">Negatif tam sayı</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl text-center">
+          <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Mutlak Değer</span>
+          <div id="lab-abs-display" class="text-3xl font-black text-emerald-400 mt-1 font-mono">|-5| = 5</div>
+          <span class="text-xs text-emerald-400/80 mt-1 block font-medium">0 noktasına 5 birim uzaklık</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl text-center">
+          <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Dış Eksi Durumu</span>
+          <div id="lab-negabs-display" class="text-3xl font-black text-rose-400 mt-1 font-mono">-|-5| = -5</div>
+          <span class="text-xs text-rose-300/80 mt-1 block font-medium">Dıştaki eksi kalır!</span>
+        </div>
+      </div>
+
+      <!-- Mini challenge in lab -->
+      <div class="bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 p-5 rounded-2xl text-center space-y-3">
+        <div class="font-bold text-base text-indigo-300">
+          🎯 Hızlı Görev: Mutlak değeri <span id="lab-target-num" class="text-amber-400 font-mono text-xl">6</span> olan sayıyı bul!
+        </div>
+        <p class="text-xs text-slate-300">Aşağıdaki sayılardan doğru olan birine tıkla:</p>
+        <div id="lab-challenge-options" class="flex flex-wrap gap-2 justify-center"></div>
+        <div id="lab-feedback" class="text-sm font-bold text-amber-300 min-h-[20px]"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 text-xs text-slate-500 border-t border-slate-800">
+    Milli Eğitim Bakanlığı (MEB) 7. Sınıf Tam Sayılar & Mutlak Değer Konu Kazanımlarına Uygundur.
+  </footer>
+
+  <!-- Guide Modal -->
+  <div id="guide-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div class="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border-b border-slate-700">
+        <div>
+          <h3 class="font-extrabold text-lg text-white">7. Sınıf Mutlak Değer Rehberi</h3>
+          <p class="text-xs text-indigo-200">Sınavlarda ve oyunda 100 puan kazandıran altın kurallar</p>
+        </div>
+        <button onclick="toggleGuide(false)" class="p-2 text-slate-400 hover:text-white rounded-xl text-xl">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-sm text-slate-300 leading-relaxed">
+        <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
+          <div class="font-bold text-base text-emerald-400 mb-1">1. Tanım: Mutlak Değer Uzaklıktır!</div>
+          <p>Bir tam sayının sayı doğrusunda <strong>0 (başlangıç) noktasına</strong> olan uzaklığına o sayının <strong>mutlak değeri</strong> denir ve <code class="bg-slate-950 px-2 py-0.5 rounded text-emerald-300 font-mono font-bold">|a|</code> ile gösterilir.</p>
+          <div class="grid grid-cols-3 gap-2 mt-3 text-center font-mono font-bold text-xs sm:text-sm">
+            <div class="bg-slate-900 p-2 rounded-xl text-emerald-300">|+6| = 6</div>
+            <div class="bg-slate-900 p-2 rounded-xl text-emerald-300">|-6| = 6</div>
+            <div class="bg-slate-900 p-2 rounded-xl text-cyan-300">|0| = 0</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
+          <div class="font-bold text-base text-amber-400 mb-1">2. Altın Kural: Uzaklık Negatif Olamaz!</div>
+          <p>Uzaklık ölçüldüğü için mutlak değerin sonucu <strong class="text-amber-300">asla negatif çıkamaz!</strong> En küçük mutlak değer <strong>0</strong> dır.</p>
+        </div>
+
+        <div class="bg-rose-950/30 border border-rose-500/40 rounded-2xl p-4">
+          <div class="font-bold text-base text-rose-400 mb-1">3. Dikkat! Dışarıdaki Eksi Tuzağı (-|a|)</div>
+          <p class="text-rose-200">Eksi işareti mutlak değer çubuğunun <strong>dışındaysa</strong> mutlak değer onu yutamaz!</p>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-rose-500/30 mt-2 font-mono text-xs space-y-1">
+            <div><span class="text-slate-400">Örnek 1:</span> <strong>-|-8|</strong> = -(8) = <span class="text-rose-400 font-bold">-8</span></div>
+            <div><span class="text-slate-400">Örnek 2:</span> <strong>-|5|</strong> = -(5) = <span class="text-rose-400 font-bold">-5</span></div>
+          </div>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
+          <div class="font-bold text-base text-blue-400 mb-1">4. Dört İşlemde Sıralama</div>
+          <p>Önce mutlak değerleri hesapla, ardından işlem önceliğini (çarpma/bölme ardından toplama/çıkarma) uygula.</p>
+          <div class="bg-slate-950 p-2 rounded-xl border border-slate-700 mt-2 font-mono text-xs">
+            <span class="text-indigo-300 font-bold">-|8| + |-3|</span> = (-8) + 3 = <span class="text-amber-400 font-bold">-5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-900 border-t border-slate-800 flex justify-end">
+        <button onclick="toggleGuide(false)" class="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">
+          Anladım, Oyuna Dön!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Synthesizer (Zero External Dependencies) -->
+  <script>
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new Ctx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      }
+      click() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.05);
+        } catch(e){}
+      }
+      correct() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          [523.25, 659.25, 783.99].forEach((f, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now + i * 0.08);
+            gain.gain.setValueAtTime(0.18, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 0.25);
+          });
+        } catch(e){}
+      }
+      wrong() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } catch(e){}
+      }
+      victory() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now + i * 0.1);
+            gain.gain.setValueAtTime(0.2, now + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.5);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.5);
+          });
+        } catch(e){}
+      }
+    }
+    const sounds = new SoundEngine();
+
+    function toggleSound() {
+      sounds.enabled = !sounds.enabled;
+      document.getElementById('sound-btn').innerHTML = sounds.enabled ? '🔊' : '🔇';
+      if (sounds.enabled) sounds.click();
+    }
+
+    function toggleGuide(open) {
+      sounds.click();
+      document.getElementById('guide-modal').classList.toggle('hidden', !open);
+    }
+  </script>
+
+  <!-- Game Logic -->
+  <script>
+    const LEVEL_DEFS = {
+      1: { title: '1. Aşama: Çırak Kaşif', subtitle: 'Temel Mutlak Değer & Sıfıra Uzaklık', badge: '🌱 Çırak' },
+      2: { title: '2. Aşama: Usta Gezgin', subtitle: 'Karşılaştırma & Dış Eksi İşaretleri', badge: '⭐ Gezgin' },
+      3: { title: '3. Aşama: Mutlak Büyücü', subtitle: 'Dört İşlem & İşlem Önceliği', badge: '👑 Büyücü' }
+    };
+
+    const QUESTIONS_BANK = [
+      // Level 1
+      { id: '1', level: 1, prompt: '|-7| = ?', qText: 'Aşağıdaki mutlak değerli ifadenin sonucu kaçtır?', options: [7, -7, 0, 14], correct: 7, exp: 'Mutlak değer bir sayının 0 noktasına uzaklığıdır. Uzaklık negatif olamayacağından |-7| = 7 dir.', numLine: -7, hint: '-7 noktasından 0 noktasına kaç adım yürünür?' },
+      { id: '2', level: 1, prompt: '|+12| = ?', qText: 'Pozitif tam sayının mutlak değeri kaçtır?', options: [12, -12, 0, 24], correct: 12, exp: '+12 sayısının 0 noktasına mesafesi 12 birimdir. |+12| = 12 dir.', numLine: 12, hint: 'Pozitif sayıların mutlak değeri kendisine eşittir.' },
+      { id: '3', level: 1, prompt: '|0| = ?', qText: 'Sıfırın (0) mutlak değeri kaçtır?', options: [0, 1, -1, 'Tanımsız'], correct: 0, exp: '0 sayısının başlangıç noktasına uzaklığı 0 birimdir. Yani |0| = 0 dır.', numLine: 0, hint: '0 sayısının kendisine mesafesi nedir?' },
+      { id: '4', level: 1, prompt: '|x| = 8 ise x hangi değerleri alabilir?', qText: '0 noktasına uzaklığı 8 birim olan tam sayılar hangileridir?', options: ['+8 veya -8', 'Yalnızca +8', 'Yalnızca -8', '0'], correct: '+8 veya -8', exp: '0 noktasına 8 birim mesafede hem +8 hem de -8 vardır. |+8| = 8 ve |-8| = 8.', numLine: 8, hint: 'Sıfırın 8 birim sağına ve soluna bak.' },
+      { id: '5', level: 1, prompt: '|-4| + |+4| = ?', qText: 'İki mutlak değerin toplamını bulunuz:', options: [8, 0, -8, 16], correct: 8, exp: '|-4| = 4 ve |+4| = 4 tür. Toplamları 4 + 4 = 8 eder.', numLine: -4, hint: 'Önce her sayının mutlak değerini bul, sonra topla.' },
+
+      // Level 2
+      { id: '6', level: 2, prompt: '-|-9| = ?', qText: 'Mutlak değer çubuğunun DIŞINDA eksi varken sonuç ne olur?', options: [-9, 9, 0, 18], correct: -9, exp: 'Kritik Kural! İçerideki |-9| = 9 olarak çıkar. Ancak dıştaki eksi kaldığı için -(9) = -9 olur!', numLine: -9, hint: 'Önce mutlak değerin içini hesapla, sonra dıştaki eksiyi koy.' },
+      { id: '7', level: 2, prompt: '-|6| = ?', qText: 'Aşağıdaki ifadenin eşitini bulunuz:', options: [-6, 6, 0, 12], correct: -6, exp: '|6| = 6 dır. Dışarıdaki eksi işareti sonucu negatif yapar: -(6) = -6.', numLine: 6, hint: 'Dışarıdaki eksiye dikkat et!' },
+      { id: '8', level: 2, prompt: '|-18| ... |+14|', qText: 'Noktalı yere hangi karşılaştırma sembolü gelmelidir?', options: ['>', '<', '='], correct: '>', exp: '|-18| = 18 ve |+14| = 14 tür. 18 > 14 olduğu için |-18| > |+14| tür.', hint: 'Önce iki tarafın da mutlak değerini bul.' },
+      { id: '9', level: 2, prompt: '-10 ... |-10|', qText: 'Normal tam sayı ile mutlak değeri karşılaştırınız:', options: ['<', '>', '='], correct: '<', exp: '-10 negatif bir sayıdır. |-10| ise +10 dur. Negatif sayı pozitiften küçüktür: -10 < 10.', hint: 'Sol taraf negatif (-10), sağ taraf ise mutlak değer (+10).' },
+      { id: '10', level: 2, prompt: 'Aşağıdakilerden hangisi EN BÜYÜKTÜR?', qText: 'İfadeleri hesaplayıp en büyüğü seçiniz:', options: ['|-25|', '-|-30|', '|+19|', '0'], correct: '|-25|', exp: '|-25| = 25 tir. -|-30| = -30 dur. En büyük değer 25 tir.', hint: 'Dışında eksi olanlar negatiftir.' },
+
+      // Level 3
+      { id: '11', level: 3, prompt: '-|8| + |-3| = ?', qText: 'İşlemin sonucunu bulunuz:', options: [-5, 11, -11, 5], correct: -5, exp: '-|8| = -8 ve |-3| = 3 tür. Toplam: (-8) + 3 = -5 bulunur!', hint: '-8 ile 3 sayısını topla.' },
+      { id: '12', level: 3, prompt: '|-15| - |-9| = ?', qText: 'İki mutlak değerin farkını bulunuz:', options: [6, 24, -6, -24], correct: 6, exp: '|-15| = 15 ve |-9| = 9 dur. 15 - 9 = 6 dır.', hint: '15 sayısından 9 sayısını çıkar.' },
+      { id: '13', level: 3, prompt: '|-24| : |-6| = ?', qText: 'Bölme işlemini yapınız:', options: [4, -4, 18, -18], correct: 4, exp: '|-24| = 24 ve |-6| = 6 dır. 24 : 6 = +4 bulunur.', hint: 'İki sayıyı da pozitif olarak böl.' },
+      { id: '14', level: 3, prompt: '|-5| · |-4| - |-12| = ?', qText: 'İşlem önceliğine göre sonucu bulunuz:', options: [8, -8, 32, 28], correct: 8, exp: '5 · 4 = 20. Çıkarma: 20 - 12 = 8 bulunur!', hint: 'Önce çarpma: 5 · 4 = 20.' },
+      { id: '15', level: 3, prompt: '| -7 + 3 | + | -4 | = ?', qText: 'Mutlak değerin içindeki işlemi yaparak sonucu bulunuz:', options: [8, 14, 0, -8], correct: 8, exp: '-7 + 3 = -4 olur. |-4| = 4 tür. Toplam: 4 + 4 = 8 dir!', hint: 'Önce mutlak değerin içini topla: -7 + 3.' }
+    ];
+
+    let currentScreen = 'menu';
+    let currentLevel = 1;
+    let unlockedLevel = 1;
+    let gameMode = 'story';
+    let currentQIndex = 0;
+    let activeQuestions = [];
+    let lives = 3;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let answered = false;
+    let timer = 25;
+    let timerInterval = null;
+    let highScore = Number(localStorage.getItem('mutlak_deger_high_score') || 0);
+
+    document.getElementById('high-score-val').innerText = highScore;
+
+    function showScreen(name) {
+      sounds.click();
+      if (timerInterval) clearInterval(timerInterval);
+      ['menu', 'levelSelect', 'playing', 'levelComplete', 'gameOver', 'lab'].forEach(s => {
+        const el = document.getElementById('screen-' + s);
+        if (el) el.classList.toggle('hidden', s !== name);
+      });
+      document.getElementById('header-stats').classList.toggle('hidden', name !== 'playing');
+      currentScreen = name;
+
+      if (name === 'levelSelect') renderLevelCards();
+      if (name === 'lab') initLab();
+    }
+
+    function renderLevelCards() {
+      const container = document.getElementById('levels-container');
+      container.innerHTML = '';
+      [1, 2, 3].forEach(lvl => {
+        const info = LEVEL_DEFS[lvl];
+        const isLocked = lvl > unlockedLevel;
+        const card = document.createElement('div');
+        card.className = `rounded-3xl p-5 border flex flex-col justify-between ${
+          isLocked ? 'bg-slate-900/40 border-slate-800 opacity-60' : 'bg-slate-900 border-slate-700 hover:border-amber-500/50 shadow-xl'
+        }`;
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300">${info.badge}</span>
+              <span class="text-xs font-semibold ${isLocked ? 'text-slate-500' : 'text-emerald-400'}">${isLocked ? '🔒 Kilitli' : '✓ Açık'}</span>
+            </div>
+            <h3 class="text-lg font-black text-white mb-1">${info.title}</h3>
+            <h4 class="text-xs font-semibold text-indigo-300 mb-2">${info.subtitle}</h4>
+          </div>
+          <button ${isLocked ? 'disabled' : ''} onclick="startLevel(${lvl})" class="w-full mt-4 py-3 rounded-xl font-bold text-sm transition ${
+            isLocked ? 'bg-slate-800 text-slate-600' : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg active:scale-95'
+          }">
+            ${isLocked ? 'Önceki Seviyeyi Geç' : 'Aşamaya Başla →'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function startLevel(lvl) {
+      currentLevel = lvl;
+      gameMode = 'story';
+      lives = 3;
+      score = 0;
+      streak = 0;
+      currentQIndex = 0;
+      activeQuestions = QUESTIONS_BANK.filter(q => q.level === lvl);
+      showScreen('playing');
+      loadQuestion();
+    }
+
+    function startEndless() {
+      currentLevel = 1;
+      gameMode = 'endless';
+      lives = 3;
+      score = 0;
+      streak = 0;
+      currentQIndex = 0;
+      activeQuestions = [...QUESTIONS_BANK].sort(() => Math.random() - 0.5);
+      showScreen('playing');
+      loadQuestion();
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('header-score').innerText = score;
+      const streakEl = document.getElementById('header-streak');
+      if (streak > 1) {
+        streakEl.classList.remove('hidden');
+        document.getElementById('header-streak-val').innerText = streak;
+      } else {
+        streakEl.classList.add('hidden');
+      }
+      let hearts = '';
+      for (let i = 0; i < 3; i++) {
+        hearts += i < lives ? '<span>❤️</span>' : '<span class="opacity-30">🤍</span>';
+      }
+      document.getElementById('header-lives').innerHTML = hearts;
+    }
+
+    function loadQuestion() {
+      answered = false;
+      const q = activeQuestions[currentQIndex];
+      document.getElementById('playing-level-badge').innerText = gameMode === 'story' ? LEVEL_DEFS[currentLevel].title : 'HIZ MARATONU';
+      document.getElementById('playing-q-count').innerText = `Soru ${currentQIndex + 1} ${gameMode === 'story' ? '/ ' + activeQuestions.length : ''}`;
+      document.getElementById('question-text').innerText = q.qText;
+      document.getElementById('question-prompt').innerText = q.prompt;
+
+      // Hint
+      const hintBtn = document.getElementById('hint-btn');
+      const hintBox = document.getElementById('hint-box');
+      hintBox.classList.add('hidden');
+      if (q.hint) {
+        hintBtn.classList.remove('hidden');
+        document.getElementById('hint-text').innerText = q.hint;
+      } else {
+        hintBtn.classList.add('hidden');
+      }
+
+      // Number line visualization
+      const nlContainer = document.getElementById('question-numberline-container');
+      nlContainer.innerHTML = '';
+      if (q.numLine !== undefined) {
+        nlContainer.innerHTML = renderNumberLineHtml(q.numLine);
+      }
+
+      // Options
+      const optionsGrid = document.getElementById('options-grid');
+      optionsGrid.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn p-4 sm:p-5 rounded-2xl border-2 border-slate-800 bg-slate-950 font-mono font-bold text-lg sm:text-xl text-white hover:bg-slate-800 transition active:scale-98';
+        btn.innerText = opt;
+        btn.onclick = () => selectOption(opt, btn);
+        optionsGrid.appendChild(btn);
+      });
+
+      document.getElementById('feedback-drawer').classList.add('hidden');
+      updateHeaderStats();
+
+      // Reset and start timer
+      timer = 25;
+      document.getElementById('playing-timer-text').innerText = timer + ' sn';
+      document.getElementById('playing-timer-bar').style.width = '100%';
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timer--;
+        document.getElementById('playing-timer-text').innerText = timer + ' sn';
+        document.getElementById('playing-timer-bar').style.width = (timer / 25 * 100) + '%';
+        if (timer <= 0) {
+          clearInterval(timerInterval);
+          onTimeout();
+        }
+      }, 1000);
+    }
+
+    function revealHint() {
+      sounds.click();
+      document.getElementById('hint-box').classList.remove('hidden');
+    }
+
+    function selectOption(selected, btnEl) {
+      if (answered) return;
+      answered = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      const q = activeQuestions[currentQIndex];
+      const isCorrect = String(selected) === String(q.correct);
+
+      // Colorize options
+      const allBtns = document.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => {
+        b.disabled = true;
+        if (String(b.innerText) === String(q.correct)) {
+          b.className = 'opt-btn p-4 sm:p-5 rounded-2xl border-2 border-emerald-400 bg-emerald-600/90 font-mono font-bold text-lg sm:text-xl text-white shadow-lg';
+        } else if (b === btnEl && !isCorrect) {
+          b.className = 'opt-btn p-4 sm:p-5 rounded-2xl border-2 border-rose-400 bg-rose-600/90 font-mono font-bold text-lg sm:text-xl text-white shadow-lg';
+        } else {
+          b.className += ' opacity-40';
+        }
+      });
+
+      const feedbackDrawer = document.getElementById('feedback-drawer');
+      const feedbackBanner = document.getElementById('feedback-banner');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackExp = document.getElementById('feedback-explanation');
+
+      feedbackDrawer.classList.remove('hidden');
+      feedbackExp.innerText = q.exp;
+
+      if (isCorrect) {
+        streak++;
+        bestStreak = Math.max(bestStreak, streak);
+        correctCount++;
+        const points = (currentLevel * 100 + timer * 4) * (1 + (streak - 1) * 0.2);
+        score += Math.round(points);
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem('mutlak_deger_high_score', highScore);
+          document.getElementById('high-score-val').innerText = highScore;
+        }
+
+        sounds.correct();
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 } });
+        }
+
+        feedbackBanner.className = 'p-4 rounded-2xl border border-emerald-500/50 bg-emerald-950/40 text-emerald-200 flex items-start gap-3';
+        feedbackIcon.innerText = '🎉';
+        feedbackTitle.innerText = 'Harika! Doğru Cevap!';
+      } else {
+        streak = 0;
+        lives--;
+        sounds.wrong();
+
+        feedbackBanner.className = 'p-4 rounded-2xl border border-rose-500/50 bg-rose-950/40 text-rose-200 flex items-start gap-3';
+        feedbackIcon.innerText = '💡';
+        feedbackTitle.innerText = 'Biraz Dikkat! İşte Doğru Çözüm:';
+      }
+
+      updateHeaderStats();
+
+      const nextBtnText = document.getElementById('next-btn-text');
+      if (gameMode === 'story' && currentQIndex + 1 >= activeQuestions.length) {
+        nextBtnText.innerText = 'Aşamayı Bitir & Sonucu Gör';
+      } else {
+        nextBtnText.innerText = 'Sıradaki Soruya Geç';
+      }
+
+      if (lives <= 0) {
+        setTimeout(() => {
+          showGameOver();
+        }, 1800);
+      }
+    }
+
+    function onTimeout() {
+      if (answered) return;
+      answered = true;
+      sounds.wrong();
+      lives--;
+      streak = 0;
+      updateHeaderStats();
+
+      const q = activeQuestions[currentQIndex];
+      const feedbackDrawer = document.getElementById('feedback-drawer');
+      const feedbackBanner = document.getElementById('feedback-banner');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackExp = document.getElementById('feedback-explanation');
+
+      feedbackDrawer.classList.remove('hidden');
+      feedbackBanner.className = 'p-4 rounded-2xl border border-rose-500/50 bg-rose-950/40 text-rose-200 flex items-start gap-3';
+      feedbackIcon.innerText = '⏰';
+      feedbackTitle.innerText = 'Süre Doldu! İşte Doğru Çözüm:';
+      feedbackExp.innerText = q.exp;
+
+      if (lives <= 0) {
+        setTimeout(showGameOver, 1800);
+      }
+    }
+
+    function nextQuestion() {
+      sounds.click();
+      if (lives <= 0) return;
+      currentQIndex++;
+      if (gameMode === 'story') {
+        if (currentQIndex >= activeQuestions.length) {
+          // Level Completed!
+          sounds.victory();
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } });
+          }
+          if (currentLevel < 3) {
+            unlockedLevel = Math.max(unlockedLevel, currentLevel + 1);
+          }
+          document.getElementById('complete-subtitle').innerText = `${LEVEL_DEFS[currentLevel].title} başarıyla tamamlandı!`;
+          document.getElementById('complete-score').innerText = score;
+          document.getElementById('complete-streak').innerText = bestStreak + 'x 🔥';
+          const nextBtn = document.getElementById('next-stage-btn');
+          if (currentLevel < 3) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.innerText = `Sonraki Aşamaya Geç (${currentLevel + 1}. Aşama) →`;
+          } else {
+            nextBtn.innerText = 'Tüm Seviyeleri Fethettin! Ana Menüye Dön';
+            nextBtn.onclick = () => showScreen('menu');
+          }
+          showScreen('levelComplete');
+          return;
+        }
+      } else {
+        if (currentQIndex >= activeQuestions.length) {
+          activeQuestions.push(...QUESTIONS_BANK.sort(() => Math.random() - 0.5));
+        }
+      }
+      loadQuestion();
+    }
+
+    function goNextStage() {
+      if (currentLevel < 3) {
+        startLevel(currentLevel + 1);
+      } else {
+        showScreen('menu');
+      }
+    }
+
+    function retryCurrentLevel() {
+      startLevel(currentLevel);
+    }
+
+    function showGameOver() {
+      document.getElementById('over-score').innerText = score;
+      document.getElementById('over-correct').innerText = correctCount;
+      showScreen('gameOver');
+    }
+
+    // Number Line SVG renderer helper
+    function renderNumberLineHtml(val, min = -8, max = 8) {
+      const clamped = Math.max(min, Math.min(max, val));
+      const absD = Math.abs(clamped);
+      const total = max - min;
+      const getPct = (n) => ((n - min) / total) * 100;
+
+      const zPct = getPct(0);
+      const vPct = getPct(clamped);
+      const left = Math.min(zPct, vPct);
+      const width = Math.abs(vPct - zPct);
+
+      let ticksHtml = '';
+      for (let i = min; i <= max; i++) {
+        const isZ = i === 0;
+        const isT = i === clamped;
+        const p = getPct(i);
+        ticksHtml += `
+          <div class="absolute top-0 -translate-x-1/2 flex flex-col items-center" style="left: ${p}%;">
+            <div class="w-0.5 ${isZ ? 'h-3 bg-cyan-400' : isT ? 'h-3 bg-amber-400' : 'h-1.5 bg-slate-600'}"></div>
+            ${(i % 2 === 0 || isT || isZ) ? `<span class="text-[10px] mt-1 ${isZ ? 'text-cyan-300 font-bold' : isT ? 'text-amber-300 font-bold' : 'text-slate-400'}">${i > 0 ? '+'+i : i}</span>` : ''}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 shadow-inner">
+          <div class="flex items-center justify-between text-xs mb-3">
+            <span class="font-bold text-slate-300">Sayı Doğrusu Modeli</span>
+            <span class="text-amber-300 font-bold bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">|${clamped > 0 ? '+'+clamped : clamped}| = ${absD} Birim Mesafe</span>
+          </div>
+          <div class="relative pt-6 pb-6 px-4">
+            ${width > 0 ? `
+              <div class="absolute top-0 flex flex-col items-center" style="left: ${left}%; width: ${Math.max(width, 3)}%;">
+                <span class="text-[10px] font-bold text-emerald-300 bg-emerald-950 border border-emerald-500/40 px-1.5 py-0.5 rounded shadow">Mesafe: ${absD}</span>
+              </div>
+            ` : ''}
+            <div class="relative h-2 bg-slate-700 rounded-full my-3">
+              <div class="absolute top-0 bottom-0 bg-amber-400 rounded-full" style="left: ${left}%; width: ${width}%;"></div>
+              <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-3 h-3 rounded-full bg-cyan-400 border-2 border-slate-900" style="left: ${zPct}%;"></div>
+              <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-5 h-5 rounded-full bg-amber-400 border-2 border-slate-900 flex items-center justify-center text-[10px] font-black text-slate-950" style="left: ${vPct}%;">★</div>
+            </div>
+            <div class="relative h-5">${ticksHtml}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Lab Explorer Logic
+    let labVal = -5;
+    let labTarget = 7;
+    let labScore = 0;
+
+    function initLab() {
+      updateLabView();
+      generateLabChallenge();
+    }
+
+    function updateLabView() {
+      const nl = document.getElementById('lab-numberline');
+      nl.innerHTML = `
+        ${renderNumberLineHtml(labVal, -8, 8)}
+        <div class="mt-4 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button onclick="changeLabVal(-1)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-xs">-1 Azalt</button>
+            <input type="range" min="-8" max="8" value="${labVal}" oninput="setLabVal(Number(this.value))" class="accent-amber-400 w-36 cursor-pointer">
+            <button onclick="changeLabVal(1)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-xs">+1 Arttır</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="setLabVal(-labVal)" class="px-3 py-1.5 bg-indigo-600/40 hover:bg-indigo-600 text-indigo-200 border border-indigo-500/40 rounded-lg text-xs font-bold">
+              Zıt İşaretlisini Seç (${labVal > 0 ? -labVal : Math.abs(labVal)})
+            </button>
+            <button onclick="setLabVal(0)" class="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-bold">0'a Git</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('lab-val-display').innerText = labVal > 0 ? '+' + labVal : labVal;
+      document.getElementById('lab-val-type').innerText = labVal < 0 ? 'Negatif tam sayı' : labVal > 0 ? 'Pozitif tam sayı' : 'Başlangıç (Nötr)';
+      document.getElementById('lab-abs-display').innerText = `|${labVal > 0 ? '+' + labVal : labVal}| = ${Math.abs(labVal)}`;
+      document.getElementById('lab-negabs-display').innerText = `-|${labVal}| = -${Math.abs(labVal)}`;
+    }
+
+    function setLabVal(v) {
+      labVal = Math.max(-8, Math.min(8, v));
+      sounds.click();
+      updateLabView();
+    }
+
+    function changeLabVal(delta) {
+      setLabVal(labVal + delta);
+    }
+
+    function generateLabChallenge() {
+      labTarget = Math.floor(Math.random() * 7) + 2;
+      document.getElementById('lab-target-num').innerText = labTarget;
+      document.getElementById('lab-feedback').innerText = '';
+
+      const container = document.getElementById('lab-challenge-options');
+      container.innerHTML = '';
+      const pool = [-labTarget, labTarget, labTarget + 1, -labTarget - 2, 0];
+      pool.sort(() => Math.random() - 0.5);
+
+      pool.forEach(n => {
+        const btn = document.createElement('button');
+        btn.className = 'px-4 py-2 bg-slate-800 hover:bg-indigo-600 text-white font-mono font-bold rounded-xl border border-slate-700 transition active:scale-95';
+        btn.innerText = n > 0 ? '+' + n : n;
+        btn.onclick = () => testLabChallenge(n);
+        container.appendChild(btn);
+      });
+    }
+
+    function testLabChallenge(tested) {
+      const fb = document.getElementById('lab-feedback');
+      if (Math.abs(tested) === labTarget) {
+        sounds.correct();
+        if (typeof confetti === 'function') confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+        labScore += 10;
+        document.getElementById('lab-score-val').innerText = labScore;
+        fb.innerText = `Harika! |${tested > 0 ? '+' + tested : tested}| = ${labTarget} doğru!`;
+        setTimeout(generateLabChallenge, 1500);
+      } else {
+        sounds.wrong();
+        fb.innerText = `Tekrar dene! |${tested}| = ${Math.abs(tested)}, hedefimiz ise ${labTarget}.`;
+      }
+    }
+  </script>
+</body>
+</html>
